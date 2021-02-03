@@ -1,14 +1,13 @@
 from django.urls import path
 from . import views
 
-print(views.fav_colors)
-
 urlpatterns = [
   path('', views.home, name='home'),
   path('about/', views.about, name='about'),
-  path('cats/', views.cats_index, name='cats_index')
+  path('cats/', views.cats_index, name='cats_index'),
+  path('cats/<int:cat_id>', views.cats_detail, name='cats_detail')
 ]
 
 """
-app.use('/users', usersController);
+app.use('/users/:userId', usersController);
 """

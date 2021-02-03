@@ -1,12 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import cats
-
-fav_colors = [
-  'red',
-  'green',
-  'blue'
-]
+from .models import Cat
 
 # Create your views here.
 def home(request):
@@ -18,4 +12,12 @@ def about(request):
   return render(request, 'about.html')
 
 def cats_index(request):
-  return render(request, 'cats/index.html', { 'cats_data': cats })
+  cats = Cat.objects.all()
+  context = { 'cats_data': cats }
+  print(context)
+  return render(request, 'cats/index.html', context)
+
+def cats_detail(request, cat_id):
+  cat = Cat.objects.get(id=cat_id)
+  context = { 'cat': cat }
+  return render(request, 'cats/detail.html', context)
