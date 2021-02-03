@@ -25,6 +25,24 @@
       {{ feeding_form.as_p }}
       <input type="submit" value="Add Feeding" class="btn">
     </form>
+
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Meal</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for feeding in cat.feeding_set.all %}
+          <tr>
+            <td>{{ feeding.date }}</td>
+            <td>{{ feeding.get_meal_display }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 
