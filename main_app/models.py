@@ -1,11 +1,19 @@
 from django.db import models
 
-# Create your models here.
+
+class Toy(models.Model):
+  name = models.CharField(max_length=50)
+  color = models.CharField(max_length=20)
+
+  def __str__(self):
+    return f'{self.name} color {self.color}'
+
 class Cat(models.Model):
   name = models.CharField(max_length=100)
   breed = models.CharField(max_length=100)
   description = models.TextField(max_length=250)
   age = models.IntegerField()
+  toys = models.ManyToManyField(Toy)
 
   # No need to make migration for model methods
   def __str__(self):

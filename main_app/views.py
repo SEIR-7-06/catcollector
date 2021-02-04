@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Cat
+from .models import Cat, Toy
 from .forms import FeedingForm
 
 # Create your views here.
@@ -17,16 +17,27 @@ def cats_index(request):
   context = { 'cats_data': cats }
   return render(request, 'cats/index.html', context)
 
+
+
+
 def cats_detail(request, cat_id):
   cat = Cat.objects.get(id=cat_id)
   # Creates a new instance of Feeding Form
   feeding_form = FeedingForm()
 
+  # Query toys cat does not have
+  toys_cat_doesnt_have = Toy.objects.exclude(id__in= cat.toys.all().values_list('id'))
+
   context = {
     'cat': cat,
-    'feeding_form': feeding_form
+    'feeding_form': feeding_form,
+    'toys': toys_cat_doesnt_have
   }
   return render(request, 'cats/detail.html', context)
+
+
+
+
 
 def add_feeding(request, cat_id):
   # Gets the data from the form
@@ -43,4 +54,11 @@ def add_feeding(request, cat_id):
     new_feeding.save()
   
   # - Redirects back to Cat Detail Page
+  return redirect('cats_detail', cat_id=cat_id)
+
+
+def assoc_toy(request, cat_id, toy_id):
+  cat = Cat.objects.get(id=cat_id)
+  cat.toys.add(toy_id)
+
   return redirect('cats_detail', cat_id=cat_id)
