@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Cat, Toy
-from .forms import FeedingForm
+from .forms import FeedingForm, CatForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -24,8 +24,21 @@ def about(request):
 
 @login_required
 def cats_index(request):
+  # If Post request Add a new cat to the DB
+  if request.method == 'POST':
+    cat_form = CatForm(request.POST)
+
+    if cat_form.is_valid():
+      new_cat = cat_form.save(commit=False)
+      new_cat.user_id = request.user.id
+      new_cat.save()
+
   cats = Cat.objects.filter(user=request.user)
-  context = { 'cats_data': cats }
+  cat_form = CatForm()
+  context = {
+    'cats_data': cats,
+    'cat_form': cat_form
+  }
   return render(request, 'cats/index.html', context)
 
 
@@ -34,12 +47,13 @@ def cats_index(request):
 
 @login_required
 def cats_detail(request, cat_id):
-  cat = Cat.objects.get(id=cat_id)
+  # cat = Cat.objects.get(id=cat_id)
+  cat = Cat.objects.filter(id=cat_id)
   # Creates a new instance of Feeding Form
   feeding_form = FeedingForm()
 
   # Query toys cat does not have
-  toys_cat_doesnt_have = Toy.objects.exclude(id__in= cat.toys.all().values_list('id'))
+  toys_cat_doesnt_have = Toy.objects.exclude(id__in=cat.toys.all().values_list('id'))
 
   context = {
     'cat': cat,
