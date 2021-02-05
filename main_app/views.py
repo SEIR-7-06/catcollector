@@ -64,6 +64,8 @@ def cats_detail(request, cat_id):
 
 
 
+
+
 @login_required
 def delete_cat(request, cat_id):
   if request.method == 'POST':
@@ -75,6 +77,8 @@ def delete_cat(request, cat_id):
 
 
 
+
+@login_required
 def edit_cat(request, cat_id):
   cat = Cat.objects.get(id=cat_id)
 
@@ -88,6 +92,7 @@ def edit_cat(request, cat_id):
     if cat_form.is_valid():
       cat_form.save()
       return redirect('cats_detail', cat_id=cat_id)
+
 
 
 
