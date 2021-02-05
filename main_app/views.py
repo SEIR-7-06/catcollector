@@ -47,13 +47,13 @@ def cats_index(request):
 
 @login_required
 def cats_detail(request, cat_id):
-  # cat = Cat.objects.get(id=cat_id)
-  cat = Cat.objects.filter(id=cat_id)
+  cat = Cat.objects.get(id=cat_id)
+
   # Creates a new instance of Feeding Form
   feeding_form = FeedingForm()
 
   # Query toys cat does not have
-  toys_cat_doesnt_have = Toy.objects.exclude(id__in=cat.toys.all().values_list('id'))
+  toys_cat_doesnt_have = Toy.objects.exclude(cat=cat_id)
 
   context = {
     'cat': cat,

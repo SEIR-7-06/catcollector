@@ -13,7 +13,7 @@ class Cat(models.Model):
   breed = models.CharField(max_length=100)
   description = models.TextField(max_length=250)
   age = models.IntegerField()
-  toys = models.ManyToManyField(Toy, blank=True)
+  toys = models.ManyToManyField(Toy, blank=True, null=True)
   user = models.ForeignKey(User, on_delete=models.CASCADE)
 
   # No need to make migration for model methods
