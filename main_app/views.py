@@ -2,15 +2,24 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Cat, Toy
 from .forms import FeedingForm
+from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
 def home(request):
   # return HttpResponse('<h1>Welcome to Cat Collector</h1>')
   return render(request, 'home.html')
 
+
+
+
+
 def about(request):
   # return HttpResponse('<h1>All about the Cat Collector</h1>')
   return render(request, 'about.html')
+
+
+
+
 
 def cats_index(request):
   cats = Cat.objects.all()
@@ -57,8 +66,29 @@ def add_feeding(request, cat_id):
   return redirect('cats_detail', cat_id=cat_id)
 
 
+
+
+
+
 def assoc_toy(request, cat_id, toy_id):
   cat = Cat.objects.get(id=cat_id)
   cat.toys.add(toy_id)
 
   return redirect('cats_detail', cat_id=cat_id)
+
+
+
+
+
+def signup(request):
+  # IF POST REQUEST SUBMIT SIGNUP FORM
+  if request.method == 'POST':
+    print('*** Made POST request to signup')
+
+
+  print('*** Hit the signup view!')
+  # IF GET REQUEST SHOW SIGNUP FORM
+  form = UserCreationForm()
+  context = { 'form': form }
+  return render(request, 'registration/signup.html', context)
+
