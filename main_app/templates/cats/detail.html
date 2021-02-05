@@ -17,8 +17,16 @@
         {% endif %}
       </div>
       <div class="card-action">
-        <button class="btn">Delete</button>
-        <button class="btn">Edit</button>
+        
+        <form action="{% url 'delete_cat' cat.id %}" method="POST">
+          {%csrf_token %}
+
+          <button type="submit" class="btn">Delete</button>
+        </form>
+
+
+
+        <a href="{% url 'edit_cat' cat.id %}" class="btn">Edit</a>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Cat, Toy
-from .forms import FeedingForm
+from .forms import FeedingForm, CatForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -48,6 +48,32 @@ def cats_detail(request, cat_id):
   }
   return render(request, 'cats/detail.html', context)
 
+
+
+@login_required
+def delete_cat(request, cat_id):
+  if request.method == 'POST':
+    cat = Cat.objects.get(id=cat_id)
+    cat.delete()
+
+  return redirect('cats_index')
+
+
+
+
+def edit_cat(request, cat_id):
+  cat = Cat.objects.get(id=cat_id)
+
+  if request.method == 'GET':
+    cat_form = CatForm(instance=cat)
+    context = {'form': cat_form}
+    return render(request, 'cats/edit.html', context)
+
+  else:
+    cat_form = CatForm(request.POST, instance=cat)
+    if cat_form.is_valid():
+      cat_form.save()
+      return redirect('cats_detail', cat_id=cat_id)
 
 
 
@@ -116,4 +142,3 @@ def signup(request):
     'error_message': error_message
   }
   return render(request, 'registration/signup.html', context)
-
