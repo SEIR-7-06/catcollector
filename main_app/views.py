@@ -3,32 +3,36 @@ from django.http import HttpResponse
 from .models import Cat, Toy
 from .forms import FeedingForm
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
-  # return HttpResponse('<h1>Welcome to Cat Collector</h1>')
   return render(request, 'home.html')
 
 
 
 
 
+
 def about(request):
-  # return HttpResponse('<h1>All about the Cat Collector</h1>')
   return render(request, 'about.html')
 
 
 
 
 
+@login_required
 def cats_index(request):
-  cats = Cat.objects.all()
+  cats = Cat.objects.filter(user=request.user)
   context = { 'cats_data': cats }
   return render(request, 'cats/index.html', context)
 
 
 
 
+
+@login_required
 def cats_detail(request, cat_id):
   cat = Cat.objects.get(id=cat_id)
   # Creates a new instance of Feeding Form
@@ -47,7 +51,7 @@ def cats_detail(request, cat_id):
 
 
 
-
+@login_required
 def add_feeding(request, cat_id):
   # Gets the data from the form
   form = FeedingForm(request.POST)
@@ -69,7 +73,7 @@ def add_feeding(request, cat_id):
 
 
 
-
+@login_required
 def assoc_toy(request, cat_id, toy_id):
   cat = Cat.objects.get(id=cat_id)
   cat.toys.add(toy_id)
@@ -80,15 +84,36 @@ def assoc_toy(request, cat_id, toy_id):
 
 
 
+##################################################
+# LOGIN ROUTES
+##################################################
 def signup(request):
+  error_message = ''
+
   # IF POST REQUEST SUBMIT SIGNUP FORM
   if request.method == 'POST':
-    print('*** Made POST request to signup')
+    # Get the data from the request body
+    form = UserCreationForm(request.POST)
+
+    # If data is valid
+    if form.is_valid():
+      # Save new user in DB
+      user = form.save()
+      # Tell Django to login our user
+      login(request, user)
+      # Take them to the cats index page
+      return redirect('cats_index')
+
+    else:
+      error_message = 'Invalid singup credentials - Try again.'
 
 
   print('*** Hit the signup view!')
   # IF GET REQUEST SHOW SIGNUP FORM
   form = UserCreationForm()
-  context = { 'form': form }
+  context = {
+    'form': form,
+    'error_message': error_message
+  }
   return render(request, 'registration/signup.html', context)
 
