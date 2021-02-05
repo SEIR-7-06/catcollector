@@ -64,6 +64,32 @@ def cats_detail(request, cat_id):
 
 
 
+@login_required
+def delete_cat(request, cat_id):
+  if request.method == 'POST':
+    cat = Cat.objects.get(id=cat_id)
+    cat.delete()
+
+  return redirect('cats_index')
+
+
+
+
+def edit_cat(request, cat_id):
+  cat = Cat.objects.get(id=cat_id)
+
+  if request.method == 'GET':
+    cat_form = CatForm(instance=cat)
+    context = {'form': cat_form}
+    return render(request, 'cats/edit.html', context)
+
+  else:
+    cat_form = CatForm(request.POST, instance=cat)
+    if cat_form.is_valid():
+      cat_form.save()
+      return redirect('cats_detail', cat_id=cat_id)
+
+
 
 @login_required
 def add_feeding(request, cat_id):
@@ -130,4 +156,3 @@ def signup(request):
     'error_message': error_message
   }
   return render(request, 'registration/signup.html', context)
-
